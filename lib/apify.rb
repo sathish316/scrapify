@@ -1,5 +1,7 @@
-require "apify/version"
-
-module Apify
-  # Your code goes here...
-end
+require 'apify/version'
+require 'active_support/core_ext/class/attribute_accessors'
+require 'nokogiri'
+require 'open-uri'
+require 'meta_define'
+require 'ostruct'
+require 'apify/base'
