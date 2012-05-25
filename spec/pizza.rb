@@ -1,5 +1,5 @@
 class Pizza
-  include Apify::Base
+  include Scrapify::Base
   html "http://www.dominos.co.in/menuDetails_ajx.php?catgId=1"
 
   attribute :name, css: ".menu_lft li a"

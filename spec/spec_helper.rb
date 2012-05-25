@@ -3,7 +3,7 @@ require 'bundler/setup'
 require 'rspec/mocks'
 require 'fakeweb'
 
-require 'apify'
+require 'scrapify'
 
 RSpec.configure do |config|
   config.mock_with :mocha

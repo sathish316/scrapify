@@ -1,4 +1,4 @@
-module Apify
+module Scrapify
   module Base
     def self.included(klass)
       klass.extend ClassMethods

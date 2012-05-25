@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'test_models'
 
-describe Apify do
+describe Scrapify do
 
   before do
     @pizza_url = "http://www.dominos.co.in/menuDetails_ajx.php?catgId=1"
