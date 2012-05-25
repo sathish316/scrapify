@@ -1,6 +1,6 @@
 ## ScrApify
 
-ScrApify is a gem to easily scrap static html sites and make them look like REST APIs using an ActiveRecord-like querying interface
+ScrApify is a library to build APIs by scraping static sites with an ActiveRecord like querying interface
 
 ### Installation
 
