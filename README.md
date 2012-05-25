@@ -33,4 +33,9 @@ Now you can use finder methods to extract data from a static site
 > pizza = Pizza.find('mushroom')
 > pizza.name
 > pizza.image_url
+
+> Pizza.first
+> Pizza.last
+
+> Pizza.count
 ```
