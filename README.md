@@ -5,12 +5,10 @@ ScrApify is a library to build APIs by scraping static sites with an ActiveRecor
 ### Installation
 
 ```
-$gem install scrapify
+$ gem install scrapify
 ```
 
-###
-
-Usage example:
+### Usage example
 
 Define html url and declare attributes using xpath or css selectors.
 Scrapify classes must have a key attribute defined.
