@@ -71,8 +71,13 @@ Check out this [Rails example](https://github.com/sathish316/jsonify_rails_examp
 
 https://github.com/sathish316/jsonify_rails_example
 
-1. Add scrapify to Gemfile
-2. Define model to scrap data in app/models
+1 Add scrapify to Gemfile
+
+```
+gem 'scrapify'
+```
+
+2 Define model to scrap data in app/models
 
 ```
 class Pizza
@@ -80,10 +85,12 @@ class Pizza
 end
 ```
 
-3. Add index and show API to routes
+3 Add index and show API to routes
 
 ```
   pizza_api = Jsonify.new('/pizzas', Pizza)
-  get 'pizzas/:id' => pizza_api
   get 'pizzas' => pizza_api
+  get 'pizzas/:id' => pizza_api
 ```
+
+Jsonify scraps url and exposes index and show urls as JSON APIs
