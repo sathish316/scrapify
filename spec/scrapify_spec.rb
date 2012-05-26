@@ -83,4 +83,11 @@ describe Scrapify do
       first_pizza.attributes.should == {name: "chicken supreme", image_url: "chicken.jpg"}
     end
   end
+
+  describe "to_json" do
+    it "should convert attributes to json" do
+      first_pizza = ::Pizza.first
+      first_pizza.to_json.should == {name: "chicken supreme", image_url: "chicken.jpg"}.to_json
+    end
+  end
 end

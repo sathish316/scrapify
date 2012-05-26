@@ -14,6 +14,10 @@ module Scrapify
       @attributes[method] || super
     end
 
+    def to_json(*args)
+      @attributes.to_json(*args)
+    end
+
     module ClassMethods
       def html(url)
         self.url = url
