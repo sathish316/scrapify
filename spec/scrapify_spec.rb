@@ -76,4 +76,11 @@ describe Scrapify do
       ::Pizza.count.should == 3
     end
   end
+
+  describe "attributes" do
+    it "should return attributes hash" do
+      first_pizza = ::Pizza.first
+      first_pizza.attributes.should == {name: "chicken supreme", image_url: "chicken.jpg"}
+    end
+  end
 end

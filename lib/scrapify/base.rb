@@ -3,6 +3,7 @@ module Scrapify
     def self.included(klass)
       klass.extend ClassMethods
       klass.cattr_accessor :url, :doc, :attribute_names
+      klass.instance_eval { attr_reader :attributes }
     end
 
     def initialize(attributes)
