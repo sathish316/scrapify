@@ -5,6 +5,14 @@ module Scrapify
       klass.cattr_accessor :url, :doc, :attribute_names
     end
 
+    def initialize(attributes)
+      @attributes = attributes
+    end
+
+    def method_missing(method, *args, &block)
+      @attributes[method] || super
+    end
+
     module ClassMethods
       def html(url)
         self.url = url
@@ -55,7 +63,7 @@ module Scrapify
         meta_define :find_by_index do |index|
           return if index.nil? or index < 0
           attributes = Hash[attribute_names.map {|attribute| [attribute, send("#{attribute}_values")[index]]}]
-          OpenStruct.new(attributes)
+          self.new(attributes)
         end
       end
 
