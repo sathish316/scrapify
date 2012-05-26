@@ -43,9 +43,12 @@ Now you can use finder methods to extract data from a static site
 ### JSON API (Rack application example)
 
 Scrapify comes with a Rack application called Jsonify which can expose scraped models as JSON.
-Rack application example is [here](https://github.com/sathish316/jsonify_rack_example)
 
-In your Rack application map the routes you want to expose using Rack::Builder#map
+Check out this [Rack application example](https://github.com/sathish316/jsonify_rack_example) for more details:
+
+https://github.com/sathish316/jsonify_rack_example
+
+In your Rack application map the routes you want to expose as JSON using Rack::Builder#map
 
 ```
   map '/pizzas' do
@@ -53,7 +56,7 @@ In your Rack application map the routes you want to expose using Rack::Builder#m
   end
 ```
 
-This will expose two urls index and show which return JSON:
+This will respond to two urls index and show with JSON:
 
 * /pizzas
 * /pizzas/:id
