@@ -63,6 +63,27 @@ This will respond to two urls index and show with JSON:
 
 Jsonify currently has a limitation where the URLs /pizzas.json and /pizzas/1.json cannot be matched by the same map entry in Rack routes
 
-### JSON API (Rails application example)
+### JSON API (Rails example)
 
-TODO
+Scrapify comes with a Rack application called Jsonify which can be used in rails routes to expose scraped models as JSON.
+
+Check out this [Rails example](https://github.com/sathish316/jsonify_rails_example) for more details:
+
+https://github.com/sathish316/jsonify_rails_example
+
+1. Add scrapify to Gemfile
+2. Define model to scrap data in app/models
+
+```
+class Pizza
+  include Scrapify::Base
+end
+```
+
+3. Add index and show API to routes
+
+```
+  pizza_api = Jsonify.new('/pizzas', Pizza)
+  get 'pizzas/:id' => pizza_api
+  get 'pizzas' => pizza_api
+```
