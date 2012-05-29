@@ -4,6 +4,7 @@ class Pizza
 
   attribute :name, css: ".menu_lft li a"
   attribute :image_url, xpath: "//li//input//@value"
+  attribute :price, css: ".price", regex: /([\d\.]+)/
 
   key :name
 end

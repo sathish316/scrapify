@@ -28,9 +28,13 @@ module Scrapify
         add_attribute(name)
         parser = options[:xpath] ? :xpath : :css
         selector = options[parser]
+        matcher = /(#{options[:regex]})/ if options[:regex]
         meta_define "#{name}_values" do
           self.doc ||= parse_html
-          self.doc.send(parser, selector).map &:content
+          self.doc.send(parser, selector).map do |element|
+            content = element.content
+            matcher ? matcher.match(content)[1] : content
+          end
         end
       end
 

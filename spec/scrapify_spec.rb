@@ -7,15 +7,15 @@ describe Scrapify do
     @pizza_url = "http://www.dominos.co.in/menuDetails_ajx.php?catgId=1"
     FakeWeb.register_uri :get, @pizza_url, :body => <<-HTML
       <ul class="menu_lft">
-        <li><a>chicken supreme</a><input value="chicken.jpg"></li>
-        <li><a>veg supreme</a><input value="veg.jpg"></li>
-        <li><a>pepperoni</a><input value="pepperoni.jpg"></li>
+        <li><a>chicken supreme</a><input value="chicken.jpg"><span class='price'>(1.23)</span></li>
+        <li><a>veg supreme</a><input value="veg.jpg"><span class='price'>(2.34)</span></li>
+        <li><a>pepperoni</a><input value="pepperoni.jpg"><span class='price'>(3.45)</span></li>
       </ul>
     HTML
   end
 
   it "should return attribute names" do
-    ::Pizza.attribute_names.should == [:name, :image_url]
+    ::Pizza.attribute_names.should == [:name, :image_url, :price]
   end
 
   describe "html" do
@@ -29,6 +29,10 @@ describe Scrapify do
 
     it "should parse html and fetch attributes using xpath" do
       ::Pizza.image_url_values.should == ['chicken.jpg', 'veg.jpg', 'pepperoni.jpg']
+    end
+
+    it "should parse html and extract attributes using regex" do
+      ::Pizza.price_values.should == ['1.23', '2.34', '3.45']
     end
   end
 
@@ -80,14 +84,14 @@ describe Scrapify do
   describe "attributes" do
     it "should return attributes hash" do
       first_pizza = ::Pizza.first
-      first_pizza.attributes.should == {name: "chicken supreme", image_url: "chicken.jpg"}
+      first_pizza.attributes.should == {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'}
     end
   end
 
   describe "to_json" do
     it "should convert attributes to json" do
       first_pizza = ::Pizza.first
-      first_pizza.to_json.should == {name: "chicken supreme", image_url: "chicken.jpg"}.to_json
+      first_pizza.to_json.should == {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'}.to_json
     end
   end
 end
