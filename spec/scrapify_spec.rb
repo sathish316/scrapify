@@ -93,5 +93,14 @@ describe Scrapify do
       first_pizza = ::Pizza.first
       first_pizza.to_json.should == {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'}.to_json
     end
+
+    it "should convert array to json" do
+      pizzas = ::Pizza.all
+      pizzas.to_json.should == [
+        {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'},
+        {name: "veg supreme", image_url: "veg.jpg", price: '2.34'},
+        {name: "pepperoni", image_url: "pepperoni.jpg", price: '3.45'},
+      ].to_json
+    end
   end
 end
