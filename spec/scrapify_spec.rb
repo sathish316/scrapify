@@ -7,15 +7,37 @@ describe Scrapify do
     @pizza_url = "http://www.dominos.co.in/menuDetails_ajx.php?catgId=1"
     FakeWeb.register_uri :get, @pizza_url, :body => <<-HTML
       <ul class="menu_lft">
-        <li><a>chicken supreme</a><input value="chicken.jpg"><span class='price'>(1.23)</span></li>
-        <li><a>veg supreme</a><input value="veg.jpg"><span class='price'>(2.34)</span></li>
-        <li><a>pepperoni</a><input value="pepperoni.jpg"><span class='price'>(3.45)</span></li>
+        <li>
+          <a>chicken supreme</a><input value="chicken.jpg">
+          <span class='price'>(1.23)</span>
+          <span class='ingredients'>
+            <ol>
+              <li>contains corn</li>
+              <li>contains tomato</li>
+            <ol>
+          </span>
+        </li>
+        <li>
+          <a>veg supreme</a><input value="veg.jpg">
+          <span class='price'>(2.34)</span>
+          <span class='ingredients'>
+            <ol>
+              <li>contains mushroom</li>
+              <li>contains jalapeno</li>
+            <ol>
+          </span>
+        </li>
+        <li>
+          <a>pepperoni</a><input value="pepperoni.jpg">
+          <span class='price'>(3.45)</span>
+          <span class='ingredients'></span>
+        </li>
       </ul>
     HTML
   end
 
   it "should return attribute names" do
-    ::Pizza.attribute_names.should == [:name, :image_url, :price]
+    ::Pizza.attribute_names.should == [:name, :image_url, :price, :ingredients]
   end
 
   describe "html" do
@@ -33,6 +55,10 @@ describe Scrapify do
 
     it "should parse html and extract attributes using regex" do
       ::Pizza.price_values.should == ['1.23', '2.34', '3.45']
+    end
+
+    it "should parse html and extract multiple attributes using regex" do
+      ::Pizza.ingredients_values.should == [['corn','tomato'], ['mushroom','jalapeno'], []]
     end
   end
 
@@ -84,22 +110,32 @@ describe Scrapify do
   describe "attributes" do
     it "should return attributes hash" do
       first_pizza = ::Pizza.first
-      first_pizza.attributes.should == {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'}
+      first_pizza.attributes.should == {
+        name: "chicken supreme",
+        image_url: "chicken.jpg",
+        price: '1.23',
+        ingredients: ['corn', 'tomato']
+      }
     end
   end
 
   describe "to_json" do
     it "should convert attributes to json" do
       first_pizza = ::Pizza.first
-      first_pizza.to_json.should == {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'}.to_json
+      first_pizza.to_json.should == {
+        name: "chicken supreme",
+        image_url: "chicken.jpg",
+        price: '1.23',
+        ingredients: ['corn', 'tomato']
+      }.to_json
     end
 
     it "should convert array to json" do
       pizzas = ::Pizza.all
       pizzas.to_json.should == [
-        {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23'},
-        {name: "veg supreme", image_url: "veg.jpg", price: '2.34'},
-        {name: "pepperoni", image_url: "pepperoni.jpg", price: '3.45'},
+        {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23', ingredients: ['corn', 'tomato']},
+        {name: "veg supreme", image_url: "veg.jpg", price: '2.34', ingredients: ['mushroom', 'jalapeno']},
+        {name: "pepperoni", image_url: "pepperoni.jpg", price: '3.45', ingredients: []},
       ].to_json
     end
   end

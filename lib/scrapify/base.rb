@@ -28,12 +28,18 @@ module Scrapify
         add_attribute(name)
         parser = options[:xpath] ? :xpath : :css
         selector = options[parser]
-        matcher = /(#{options[:regex]})/ if options[:regex]
+        matcher = /#{options[:regex]}/ if options[:regex]
+        to_array = options[:array]
         meta_define "#{name}_values" do
           self.doc ||= parse_html
           self.doc.send(parser, selector).map do |element|
             content = element.content
-            matcher ? matcher.match(content)[1] : content
+            if matcher
+              match_data = content.scan(matcher).map &:first
+              options[:array] ? match_data : match_data.first
+            else
+              content
+            end
           end
         end
       end
@@ -51,7 +57,11 @@ module Scrapify
       end
 
       def parse_html
-        Nokogiri::HTML(open(url))
+        Nokogiri::HTML(html_content)
+      end
+
+      def html_content
+        open(url)
       end
 
       def define_finders
