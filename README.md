@@ -8,6 +8,12 @@ ScrApify is a library to build APIs by scraping static sites and use data as mod
 $ gem install scrapify
 ```
 
+If you're using Bundler, add this to your Gemfile:
+
+```
+gem 'scrapify'
+```
+
 ### Usage
 
 Define html url and declare attributes using xpath or css selectors.
