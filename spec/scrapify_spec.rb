@@ -5,7 +5,11 @@ describe Scrapify do
 
   before do
     @pizza_url = "http://www.dominos.co.in/menuDetails_ajx.php?catgId=1"
-    FakeWeb.register_uri :get, @pizza_url, :body => <<-HTML
+    FakeWeb.register_uri :get, @pizza_url,
+                         :cache_control => "private, s-maxage=0, max-age=0, must-revalidate",
+                         :age           => 51592,
+                         :length        => 12312,
+                         :body          => <<-HTML
       <ul class="menu_lft">
         <li>
           <a>chicken supreme</a><input value="chicken.jpg">
@@ -59,6 +63,15 @@ describe Scrapify do
 
     it "should parse html and extract multiple attributes using regex" do
       ::Pizza.ingredients_values.should == [['corn','tomato'], ['mushroom','jalapeno'], []]
+    end
+
+    describe "cache headers" do
+      it "should return the http headers" do
+        ::Pizza.http_cache_header.should == {
+           "cache-control" => "private, s-maxage=0, max-age=0, must-revalidate",
+           "age"           => 51592,
+        }
+      end
     end
   end
 

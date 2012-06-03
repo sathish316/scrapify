@@ -1,5 +1,6 @@
 module Scrapify
   module Base
+    HTTP_CACHE_HEADERS_TO_RETURN = %w(Cache-Control Last-Modified Age ETag)
     def self.included(klass)
       klass.extend ClassMethods
       klass.cattr_accessor :url, :doc, :attribute_names
@@ -49,6 +50,12 @@ module Scrapify
         define_count attribute
       end
 
+      def http_cache_header
+        http_header.select do |(k, v)|
+          HTTP_CACHE_HEADERS_TO_RETURN.map(&:upcase).include?(k.upcase)
+        end
+      end
+
       private
 
       def add_attribute(name)
@@ -61,7 +68,17 @@ module Scrapify
       end
 
       def html_content
-        open(url)
+        http_response.body
+      end
+
+      def http_response
+        @http_response ||= Net::HTTP.get_response URI(url)
+      end
+
+      def http_header
+        http_response.header.to_hash.each_with_object({}) do |(k,v), hash|
+          hash[k] = v.first
+        end
       end
 
       def define_finders
