@@ -7,7 +7,8 @@ class Jsonify
   def call(env)
     path = env['REQUEST_PATH']
     response = path == @route ? all : one(find_id(path))
-    [200, {"Content-Type" => "application/json"}, [response]]
+    header = @model.http_cache_header.merge("Content-Type" => "application/json")
+    [200, header, [response]]
   end
 
   private
