@@ -12,7 +12,7 @@ describe Scrapify do
                          :body          => <<-HTML
       <ul class="menu_lft">
         <li>
-          <a>chicken supreme</a><input value="chicken.jpg">
+          <a>  chicken supreme  </a><input value="chicken.jpg">
           <span class='price'>(1.23)</span>
           <span class='ingredients'>
             <ol>
@@ -63,6 +63,10 @@ describe Scrapify do
 
     it "should parse html and extract multiple attributes using regex" do
       ::Pizza.ingredients_values.should == [['corn','tomato'], ['mushroom','jalapeno'], []]
+    end
+
+    it "should strip content" do
+      ::Pizza.first.name.should == 'chicken supreme'
     end
 
     describe "cache headers" do

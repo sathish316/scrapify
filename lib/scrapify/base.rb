@@ -39,7 +39,7 @@ module Scrapify
               match_data = content.scan(matcher).map &:first
               options[:array] ? match_data : match_data.first
             else
-              content
+              content.strip
             end
           end
         end
