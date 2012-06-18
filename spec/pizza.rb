@@ -6,6 +6,11 @@ class Pizza
   attribute :image_url, xpath: "//li//input//@value"
   attribute :price, css: ".price", regex: /([\d\.]+)/
   attribute :ingredients, css: ".ingredients", regex: /contains (\w+)/, array: true
+  attribute :ingredient_urls, css: '.references ol li' do |element|
+    element.children.map do |child|
+        child.attributes['href'].value if child.attributes['href']
+    end.compact
+  end
 
   key :name
 end

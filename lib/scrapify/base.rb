@@ -25,7 +25,7 @@ module Scrapify
         define_finders
       end
 
-      def attribute(name, options={})
+      def attribute(name, options={}, &block)
         add_attribute(name)
         parser = options[:xpath] ? :xpath : :css
         selector = options[parser]
@@ -34,12 +34,16 @@ module Scrapify
         meta_define "#{name}_values" do
           self.doc ||= parse_html
           self.doc.send(parser, selector).map do |element|
-            content = element.content
-            if matcher
-              match_data = content.scan(matcher).map &:first
-              options[:array] ? match_data : match_data.first
+            if block
+              yield element
             else
-              content.strip
+              content = element.content
+              if matcher
+                match_data = content.scan(matcher).map &:first
+                options[:array] ? match_data : match_data.first
+              else
+                content.strip
+              end
             end
           end
         end
