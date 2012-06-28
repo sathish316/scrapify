@@ -4,8 +4,9 @@ module Scrapify
       @scraper = Class.new
       @scraper.send(:include, Scrapify::Base)
       @scraper.html url
-      @scraper.key key_attr
-      attributes.each do |attr, options|
+      @scraper.key key_attr.to_sym
+      attributes.symbolize_keys.each do |attr, options|
+        options = options.symbolize_keys
         custom_block = options.delete(:block)
         @scraper.attribute attr, options, &custom_block
       end

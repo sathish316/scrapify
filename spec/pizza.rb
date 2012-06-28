@@ -8,7 +8,7 @@ class Pizza
   attribute :ingredients, css: ".ingredients", regex: /contains (\w+)/, array: true
   attribute :ingredient_urls, css: '.references ol li' do |element|
     element.children.map do |child|
-        child.attributes['href'].value if child.attributes['href']
+      child.attributes['href'].value if child.attributes['href']
     end.compact
   end
 

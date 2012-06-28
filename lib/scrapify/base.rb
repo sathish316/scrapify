@@ -27,6 +27,7 @@ module Scrapify
 
       def attribute(name, options={}, &block)
         add_attribute(name)
+        options = options.symbolize_keys
         parser = options[:xpath] ? :xpath : :css
         selector = options[parser]
         matcher = /#{options[:regex]}/ if options[:regex]
