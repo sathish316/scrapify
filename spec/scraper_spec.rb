@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'test_models'
 
-describe Scrapify::Page do
+describe Scrapify::Scraper do
   attributes = {:name => {:css => ".menu_lft li a"},
                 :image_url => {:xpath => "//li//input//@value"},
                 :price => {:css => ".price", :regex => /([\d\.]+)/},
@@ -10,5 +10,5 @@ describe Scrapify::Page do
                                      :block => lambda{|element| element.children.map{|child| child.attributes['href'].value if child.attributes['href']}.compact}
                                     }
               }
-  it_should_behave_like "Scrapify", Scrapify::Page.new(::Pizza.url, :name, attributes)
+  it_should_behave_like "Scrapify", Scrapify::Scraper.new(::Pizza.url, :name, attributes)
 end
