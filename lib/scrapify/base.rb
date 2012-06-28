@@ -31,7 +31,7 @@ module Scrapify
         selector = options[parser]
         matcher = /#{options[:regex]}/ if options[:regex]
         to_array = options[:array]
-        meta_define "#{name}_values" do
+        define_singleton_method "#{name}_values" do
           self.doc ||= parse_html
           self.doc.send(parser, selector).map do |element|
             if block
@@ -86,21 +86,21 @@ module Scrapify
       end
 
       def define_finders
-        meta_define :all do
+        define_singleton_method :all do
           count.times.map do |index|
             find_by_index index
           end
         end
 
-        meta_define :first do
+        define_singleton_method :first do
           find_by_index 0
         end
 
-        meta_define :last do
+        define_singleton_method :last do
           find_by_index count - 1
         end
 
-        meta_define :find_by_index do |index|
+        define_singleton_method :find_by_index do |index|
           return if index.nil? or index < 0
           attributes = Hash[attribute_names.map {|attribute| [attribute, send("#{attribute}_values")[index]]}]
           self.new(attributes)
@@ -108,13 +108,13 @@ module Scrapify
       end
 
       def define_count(key_attribute)
-        meta_define :count do
+        define_singleton_method :count do
           send("#{key_attribute}_values").size
         end
       end
 
       def define_find_by_id(key_attribute)
-        meta_define :find do |key_value|
+        define_singleton_method :find do |key_value|
           index = send("#{key_attribute}_values").index(key_value)
           find_by_index index
         end
