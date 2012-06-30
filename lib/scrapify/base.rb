@@ -106,6 +106,15 @@ module Scrapify
           attributes = Hash[attribute_names.map {|attribute| [attribute, send("#{attribute}_values")[index]]}]
           self.new(attributes)
         end
+
+        define_singleton_method :where do |conditions = {}|
+          raise Scrapify::AttributeDoesNotExist.new(conditions.keys - attribute_names) unless conditions.keys.all?{|key| attribute_names.include?(key) }
+          indices = conditions.collect do |attribute, value|
+            send("#{attribute}_values").each_with_index.find_all{|attr_val, index| attr_val == value}.collect(&:last)
+          end
+          common_indices = indices.reduce {|a, b| a & b}
+          common_indices.collect{|index| find_by_index(index)}
+        end
       end
 
       def define_count(key_attribute)

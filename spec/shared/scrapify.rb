@@ -175,4 +175,20 @@ shared_examples_for "Scrapify" do |klass_or_object|
       ].to_json
     end
   end
+
+  it_behaves_like '#finder', klass_or_object, :name => 'chicken golden delight'
+  it_behaves_like '#finder', klass_or_object, :image_url => 'golden.jpg'
+  it_behaves_like '#finder', klass_or_object, :price => '4.56'
+  it_behaves_like '#finder', klass_or_object, :ingredient_urls => ['chicken.html', 'delight.html']
+  it_behaves_like '#finder', klass_or_object, :name => 'chicken golden delight', :image_url => 'golden.jpg', :price => '4.56', :ingredient_urls => ['chicken.html', 'delight.html']
+
+  it 'should return empty array if object is not found' do
+    klass_or_object.where(:name => 'does not exist').should be_empty
+  end
+
+  it 'should throw exception if attribute is not defined' do
+    lambda {
+      klass_or_object.where(:some_attribute => 'chicken golden delight')
+    }.should raise_error(Scrapify::AttributeDoesNotExist)
+  end
 end
