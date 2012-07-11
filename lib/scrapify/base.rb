@@ -69,7 +69,9 @@ module Scrapify
       end
 
       def parse_html
-        Nokogiri::HTML(html_content)
+        doc = Nokogiri::HTML(html_content)
+        doc.css('br').each {|br| br.replace("\n")}
+        doc
       end
 
       def html_content

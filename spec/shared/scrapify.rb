@@ -19,7 +19,7 @@ shared_examples_for "Scrapify" do |klass_or_object|
           <span class='references'><ol><li></li></ol></span
         </li>
         <li>
-          <a>veg supreme</a><input value="veg.jpg">
+          <a>veg<br/>supreme</a><input value="veg.jpg">
           <span class='price'>(2.34)</span>
           <span class='ingredients'>
             <ol>
@@ -62,7 +62,7 @@ shared_examples_for "Scrapify" do |klass_or_object|
     end
 
     it "should parse html and fetch attributes using css" do
-      klass_or_object.name_values.should == ['chicken supreme', 'veg supreme', 'pepperoni', 'chicken golden delight']
+      klass_or_object.name_values.should == ['chicken supreme', "veg\nsupreme", 'pepperoni', 'chicken golden delight']
     end
 
     it "should parse html and fetch attributes using xpath" do
@@ -83,6 +83,10 @@ shared_examples_for "Scrapify" do |klass_or_object|
 
     it "should strip content" do
       klass_or_object.first.name.should == 'chicken supreme'
+    end
+
+    it "should replace br with newline" do
+      klass_or_object.all[1].name.should == "veg\nsupreme"
     end
 
     describe "cache headers" do
@@ -120,7 +124,7 @@ shared_examples_for "Scrapify" do |klass_or_object|
   describe "last" do
     it "should fetch last matching element" do
       last_pizza = klass_or_object.last
-      last_pizza.name.should == 'chicken golden delight'
+      last_pizza.name.should == "chicken golden delight"
       last_pizza.image_url.should == 'golden.jpg'
     end
   end
@@ -129,7 +133,7 @@ shared_examples_for "Scrapify" do |klass_or_object|
     it "should fetch all objects" do
       pizzas = klass_or_object.all
       pizzas.size.should == 4
-      pizzas.map(&:name).should == ['chicken supreme', 'veg supreme', 'pepperoni', 'chicken golden delight']
+      pizzas.map(&:name).should == ['chicken supreme', "veg\nsupreme", 'pepperoni', 'chicken golden delight']
       pizzas.map(&:image_url).should == ['chicken.jpg', 'veg.jpg', 'pepperoni.jpg', 'golden.jpg']
     end
   end
@@ -169,7 +173,7 @@ shared_examples_for "Scrapify" do |klass_or_object|
       pizzas = klass_or_object.all
       pizzas.to_json.should == [
         {name: "chicken supreme", image_url: "chicken.jpg", price: '1.23', ingredients: ['corn', 'tomato'], :ingredient_urls => []},
-        {name: "veg supreme", image_url: "veg.jpg", price: '2.34', ingredients: ['mushroom', 'jalapeno'], :ingredient_urls => []},
+        {name: "veg\nsupreme", image_url: "veg.jpg", price: '2.34', ingredients: ['mushroom', 'jalapeno'], :ingredient_urls => []},
         {name: "pepperoni", image_url: "pepperoni.jpg", price: '3.45', ingredients: [], :ingredient_urls => []},
         {name: "chicken golden delight", image_url: "golden.jpg", price: '4.56', ingredients: [], :ingredient_urls => ['chicken.html', 'delight.html']},
       ].to_json
