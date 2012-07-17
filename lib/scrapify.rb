@@ -1,6 +1,7 @@
 require 'scrapify/version'
 require 'active_support/core_ext/class/attribute_accessors'
 require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/object/blank'
 require 'nokogiri'
 require 'uri'
 require 'net/http'

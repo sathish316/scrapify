@@ -3,7 +3,7 @@ module Scrapify
     HTTP_CACHE_HEADERS_TO_RETURN = %w(Cache-Control Last-Modified Age ETag)
     def self.included(klass)
       klass.extend ClassMethods
-      klass.cattr_accessor :url, :doc, :attribute_names
+      klass.cattr_accessor :url, :doc, :attribute_names, :next_page_selector
       klass.instance_eval { attr_reader :attributes }
     end
 
@@ -25,6 +25,10 @@ module Scrapify
         define_finders
       end
 
+      def next_page(next_page_selector)
+        self.next_page_selector = next_page_selector
+      end
+
       def attribute(name, options={}, &block)
         add_attribute(name)
         options = options.symbolize_keys
@@ -33,20 +37,30 @@ module Scrapify
         matcher = /#{options[:regex]}/ if options[:regex]
         to_array = options[:array]
         define_singleton_method "#{name}_values" do
-          self.doc ||= parse_html
-          self.doc.send(parser, selector).map do |element|
-            if block
-              yield element
-            else
-              content = element.content
-              if matcher
-                match_data = content.scan(matcher).map &:first
-                options[:array] ? match_data : match_data.first
+          values = []
+          self.doc = parse_html(url)
+          while self.doc
+            page_values = self.doc.send(parser, selector).map do |element|
+              if block
+                yield element
               else
-                content.strip
+                content = element.content
+                if matcher
+                  match_data = content.scan(matcher).map &:first
+                  options[:array] ? match_data : match_data.first
+                else
+                  content.strip
+                end
               end
             end
+            values += page_values
+            if next_page_selector and (next_page_url = self.doc.send(next_page_selector.keys.first, next_page_selector.values.first).first) and !next_page_url.content.blank?
+              self.doc = parse_html(next_page_url.content)
+            else
+              self.doc = nil
+            end
           end
+          values
         end
       end
 
@@ -56,7 +70,7 @@ module Scrapify
       end
 
       def http_cache_header
-        http_header.select do |(k, v)|
+        http_header(url).select do |(k, v)|
           HTTP_CACHE_HEADERS_TO_RETURN.map(&:upcase).include?(k.upcase)
         end
       end
@@ -68,22 +82,22 @@ module Scrapify
         self.attribute_names << name
       end
 
-      def parse_html
-        doc = Nokogiri::HTML(html_content)
+      def parse_html(url)
+        doc = Nokogiri::HTML(html_content(url))
         doc.css('br').each {|br| br.replace("\n")}
         doc
       end
 
-      def html_content
-        http_response.body
+      def html_content(url)
+        http_response(url).body
       end
 
-      def http_response
-        @http_response ||= Net::HTTP.get_response URI(url)
+      def http_response(url)
+        @http_response = Net::HTTP.get_response URI(url)
       end
 
-      def http_header
-        http_response.header.to_hash.each_with_object({}) do |(k,v), hash|
+      def http_header(url)
+        http_response(url).header.to_hash.each_with_object({}) do |(k,v), hash|
           hash[k] = v.first
         end
       end
