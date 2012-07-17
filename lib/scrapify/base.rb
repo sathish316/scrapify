@@ -38,26 +38,28 @@ module Scrapify
         to_array = options[:array]
         define_singleton_method "#{name}_values" do
           values = []
-          self.doc = parse_html(url)
-          while self.doc
-            page_values = self.doc.send(parser, selector).map do |element|
-              if block
-                yield element
-              else
-                content = element.content
-                if matcher
-                  match_data = content.scan(matcher).map &:first
-                  options[:array] ? match_data : match_data.first
+          Array.wrap(url).each do |uri|
+            self.doc = parse_html(uri)
+            while self.doc
+              page_values = self.doc.send(parser, selector).map do |element|
+                if block
+                  yield element
                 else
-                  content.strip
+                  content = element.content
+                  if matcher
+                    match_data = content.scan(matcher).map &:first
+                    options[:array] ? match_data : match_data.first
+                  else
+                    content.strip
+                  end
                 end
               end
-            end
-            values += page_values
-            if next_page_selector and (next_page_url = self.doc.send(next_page_selector.keys.first, next_page_selector.values.first).first) and !next_page_url.content.blank?
-              self.doc = parse_html(next_page_url.content)
-            else
-              self.doc = nil
+              values += page_values
+              if next_page_selector and (next_page_url = self.doc.send(next_page_selector.keys.first, next_page_selector.values.first).first) and !next_page_url.content.blank?
+                self.doc = parse_html(next_page_url.content)
+              else
+                self.doc = nil
+              end
             end
           end
           values

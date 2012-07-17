@@ -1,2 +1,3 @@
-require 'pizza'
-require 'book'
+require 'models/pizza'
+require 'models/book'
+require 'models/magazine'
