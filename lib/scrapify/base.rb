@@ -3,7 +3,7 @@ module Scrapify
     HTTP_CACHE_HEADERS_TO_RETURN = %w(Cache-Control Last-Modified Age ETag)
     def self.included(klass)
       klass.extend ClassMethods
-      klass.cattr_accessor :url, :doc, :attribute_names
+      klass.cattr_accessor :url, :doc, :attribute_names, :type
       klass.instance_eval { attr_reader :attributes }
     end
 
@@ -22,6 +22,13 @@ module Scrapify
     module ClassMethods
       def html(url)
         self.url = url
+        self.type = :html
+        define_finders
+      end
+
+      def xml(url)
+        self.url = url
+        self.type = :xml
         define_finders
       end
 
@@ -33,7 +40,7 @@ module Scrapify
         matcher = /#{options[:regex]}/ if options[:regex]
         to_array = options[:array]
         define_singleton_method "#{name}_values" do
-          self.doc ||= parse_html
+          self.doc ||= parse_doc
           self.doc.send(parser, selector).map do |element|
             if block
               yield element
@@ -68,9 +75,14 @@ module Scrapify
         self.attribute_names << name
       end
 
-      def parse_html
-        doc = Nokogiri::HTML(html_content)
-        doc.css('br').each {|br| br.replace("\n")}
+      def parse_doc
+        doc = case type
+              when :html
+                Nokogiri::HTML(html_content)
+              when :xml
+                Nokogiri::XML(html_content)
+              end
+        doc.css('br').each {|br| br.replace("\n")} if type == :html
         doc
       end
 
