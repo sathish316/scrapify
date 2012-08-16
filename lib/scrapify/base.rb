@@ -109,7 +109,8 @@ module Scrapify
           self.new(attributes)
         end
 
-        define_singleton_method :where do |conditions = {}|
+        define_singleton_method :where do |conditions|
+          conditions ||= {}
           raise Scrapify::AttributeDoesNotExist.new(conditions.keys - attribute_names) unless conditions.keys.all?{|key| attribute_names.include?(key) }
           indices = conditions.collect do |attribute, value|
             send("#{attribute}_values").each_with_index.find_all{|attr_val, index| attr_val == value}.collect(&:last)
