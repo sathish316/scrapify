@@ -100,3 +100,9 @@ end
 ```
 
 Jsonify scraps url and exposes index and show urls as JSON APIs
+
+## License
+
+ScrApify is released under the MIT license:
+
+http://www.opensource.org/licenses/MIT
