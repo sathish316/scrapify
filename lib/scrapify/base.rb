@@ -79,7 +79,18 @@ module Scrapify
       end
 
       def http_response
-        @http_response ||= Net::HTTP.get_response URI(url)
+        @http_response ||= get_response(url, url =~ /^https/i)
+      end
+
+      def get_response(url, secure=false)
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        if secure
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
       end
 
       def http_header

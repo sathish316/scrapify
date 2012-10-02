@@ -4,6 +4,8 @@ require 'active_support/core_ext/hash/keys'
 require 'nokogiri'
 require 'uri'
 require 'net/http'
+require "net/https"
+require "uri"
 require 'scrapify/base'
 require 'scrapify/scraper'
 require 'scrapify/exceptions'
